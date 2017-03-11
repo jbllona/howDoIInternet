@@ -1,9 +1,10 @@
 import java.net.*;
 import java.io.*;
+import java.util.Scanner;
+
 
 public class GreetingClient
 {
-	private static String msgToSend = "Hello from the other sIIIIIiiidddee";
 	public static void main(String [] args)
 	{
 		String serverName = args[0];
@@ -13,9 +14,16 @@ public class GreetingClient
 			System.out.println("Connectiong to " + serverName + " on port " + port);
 			Socket client = new Socket(serverName, port);
 			
-			// System.out.println("Just connected to " + client.getRemoteSocketAddress());
+
 			OutputStream outToServer = client.getOutputStream();
 			DataOutputStream out = new DataOutputStream(outToServer);
+			
+			String msgToSend;
+			Scanner input = new Scanner(System.in);
+			do 
+			{
+				msgToSend = input.next();
+			} while (!msgToSend.equals("EXIT"));
 			
 			System.out.println("You: " + msgToSend);
 			out.writeUTF(msgToSend);

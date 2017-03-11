@@ -102,11 +102,21 @@ public class GreetingServer extends Thread
 				timeOutMs = Integer.parseInt(args[1]);
 		}
 		
+		Thread t = null
+		
 		try
 		{
-			Thread t = new WaitForInput(port);
+			if(args.length > 1)
+			{
+				t = new WaitForInput(port, timeOutMs);
+			}
+			else
+			{
+				t = new WaitForInput(port);
+			}
 			t.start();
 		}
+		
 		catch(Exception e)
 		{
 			e.printStackTrace();
