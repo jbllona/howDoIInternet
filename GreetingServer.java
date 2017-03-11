@@ -3,12 +3,13 @@ import java.io.*;
 
 public class GreetingServer extends Thread
 {
+	String msgToSend = "I don't know why you say goodbye I say hello!";
 	private ServerSocket serverSocket;
 	
-	public GreetingServer(int port) throws IOException
+	public GreetingServer(int port, int timeOut) throws IOException
 	{
 		serverSocket = new ServerSocket(port);
-		serverSocket.setSoTimeout(10000);
+		serverSocket.setSoTimeout(timeOut);
 	}
 	
 	public void run()
@@ -17,15 +18,15 @@ public class GreetingServer extends Thread
 		{
 			try
 			{
-				System.out.println("Wondering if after all these years I'll meet the client port");
+				System.out.println("You (to self): Wondering if after all these years I'll meet the client port");
 				Socket server = serverSocket.accept();
 				
-				System.out.println("Just connected to " + server.getRemoteSocketAddress());
 				DataInputStream in = new DataInputStream(server.getInputStream());
+				System.out.println("Client: " + in.readUTF());
 				
-				System.out.println(in.readUTF());
+				System.out.println("You: " + msgToSend);
 				DataOutputStream out = new DataOutputStream(server.getOutputStream());
-				out.writeUTF("I don't know why you say goodbye I say hello!");
+				out.writeUTF(msgToSend);
 				
 				server.close();
 			}
@@ -45,9 +46,10 @@ public class GreetingServer extends Thread
 	public static void main(String[] args)
 	{
 		int port = Integer.parseInt(args[0]);
+		int timeOutMs = Integer.parseInt(args[1]);
 		try
 		{
-			Thread t = new GreetingServer(port);
+			Thread t = new GreetingServer(port, timeOutMs);
 			t.start();
 		}
 		catch(IOException e)
