@@ -72,16 +72,21 @@ public class GreetingServer extends Thread
 	{
 		try
 		{
-			System.out.println("You (to self): Wondering if after all these years I'll meet the client port");
-			Socket server = serverSocket.accept();
-			DataInputStream in = new DataInputStream(server.getInputStream());
-			System.out.println("Client: " + in.readUTF());
-			
-			System.out.println("You: " + msgToSend);
-			DataOutputStream out = new DataOutputStream(server.getOutputStream());
-			out.writeUTF(msgToSend);
-			
-			server.close();
+			boolean exitLoop = false; // TODO: make this change to true with command from input thread
+			while(!exitLoop)
+			{
+				System.out.println("You (to self): Wondering if after all these years I'll meet the client port");
+				Socket server = serverSocket.accept();
+				System.out.println("after accept");
+				DataInputStream in = new DataInputStream(server.getInputStream());
+				String recievedMessage = in.readUTF();
+				System.out.println("Client: " + recievedMessage);
+				
+				System.out.println("You: " + msgToSend);
+				DataOutputStream out = new DataOutputStream(server.getOutputStream());
+				out.writeUTF(msgToSend);
+				server.close();
+			}
 		}
 		catch(SocketTimeoutException s)
 		{
@@ -102,7 +107,7 @@ public class GreetingServer extends Thread
 				timeOutMs = Integer.parseInt(args[1]);
 		}
 		
-		Thread t = null
+		Thread t = null;
 		
 		try
 		{

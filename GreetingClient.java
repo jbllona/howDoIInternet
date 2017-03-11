@@ -11,26 +11,39 @@ public class GreetingClient
 		int port = Integer.parseInt(args[1]);
 		try
 		{
-			System.out.println("Connectiong to " + serverName + " on port " + port);
-			Socket client = new Socket(serverName, port);
+			System.out.println("Connecting to " + serverName + " on port " + port);
 			
-
-			OutputStream outToServer = client.getOutputStream();
-			DataOutputStream out = new DataOutputStream(outToServer);
-			
-			String msgToSend;
+			Socket client = null;
 			Scanner input = new Scanner(System.in);
-			do 
+			String msgToSend;
+			
+			while(true)
 			{
+				client = new Socket(serverName, port);
+				
+
+				OutputStream outToServer = client.getOutputStream();
+				DataOutputStream out = new DataOutputStream(outToServer);
+				
+				
+				System.out.print("You: ");
+				
 				msgToSend = input.next();
-			} while (!msgToSend.equals("EXIT"));
+				
+				if(msgToSend.equals("EXIT"))
+				{
+					break;
+				}
+				
+				out.writeUTF(msgToSend);
+				InputStream inFromServer = client.getInputStream();
+				DataInputStream in = new DataInputStream(inFromServer);
+				
+				System.out.println("\nServer: " + in.readUTF());
+				
+			}
 			
-			System.out.println("You: " + msgToSend);
-			out.writeUTF(msgToSend);
-			InputStream inFromServer = client.getInputStream();
-			DataInputStream in = new DataInputStream(inFromServer);
 			
-			System.out.println("Server: " + in.readUTF());
 			client.close();
 		}
 		catch(IOException e)
