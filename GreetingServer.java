@@ -17,7 +17,7 @@ public class GreetingServer extends Thread
 		{
 			try
 			{
-				System.out.println("Wondering if after all these years I'll meet the cliant port");
+				System.out.println("Wondering if after all these years I'll meet the client port");
 				Socket server = serverSocket.accept();
 				
 				System.out.println("Just connected to " + server.getRemoteSocketAddress());
