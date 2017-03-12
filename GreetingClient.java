@@ -14,7 +14,7 @@ public class GreetingClient
 			System.out.println("Connecting to " + serverName + " on port " + port);
 			
 			Socket client = null;
-			Scanner input = new Scanner(System.in);
+			Scanner input = new Scanner(System.in).useDelimiter("\n");
 			String msgToSend;
 			
 			while(true)
@@ -38,7 +38,7 @@ public class GreetingClient
 				out.writeUTF(msgToSend);
 				InputStream inFromServer = client.getInputStream();
 				DataInputStream in = new DataInputStream(inFromServer);
-				
+				System.out.println("sent");
 				System.out.println("\nServer: " + in.readUTF());
 				
 			}

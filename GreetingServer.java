@@ -42,7 +42,7 @@ class WaitForInput extends Thread
 	public void run()
 	{
 		String userCommand = input.next();
-		if(userCommand.equalsIgnoreCase("exit"))
+		if(userCommand.equals("EXIT"))
 		{
 			System.out.println("attempting to exit");
 			serverThread.stop();
@@ -75,14 +75,19 @@ public class GreetingServer extends Thread
 			boolean exitLoop = false; // TODO: make this change to true with command from input thread
 			while(!exitLoop)
 			{
-				System.out.println("You (to self): Wondering if after all these years I'll meet the client port");
+				// System.out.println("You (to self): Wondering if after all these years I'll meet the client port");
 				Socket server = serverSocket.accept();
-				System.out.println("after accept");
 				DataInputStream in = new DataInputStream(server.getInputStream());
 				String recievedMessage = in.readUTF();
 				System.out.println("Client: " + recievedMessage);
 				
-				System.out.println("You: " + msgToSend);
+				Socket client = null;
+				Scanner input = new Scanner(System.in).useDelimiter("\n");
+				
+				System.out.print("You: ");
+				msgToSend = input.next();
+				
+				System.out.println(msgToSend);
 				DataOutputStream out = new DataOutputStream(server.getOutputStream());
 				out.writeUTF(msgToSend);
 				server.close();
