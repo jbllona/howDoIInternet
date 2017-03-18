@@ -2,69 +2,21 @@ import java.net.*;
 import java.io.*;
 import java.util.Scanner;
 
-
-class WaitForInput extends Thread
-{
-	Scanner input;
-	Thread serverThread;
-	public WaitForInput(int port, int timeOut)
-	{
-		input = new Scanner(System.in);
-		
-		serverThread = null;
-		try
-		{
-			serverThread = new GreetingServer(port, timeOut);
-			serverThread.start();
-		}
-		catch(Exception e)
-		{
-			
-		}
-	}
-	
-	public WaitForInput(int port)
-	{
-		input = new Scanner(System.in);
-		
-		serverThread = null;
-		try
-		{
-			serverThread = new GreetingServer(port);
-			serverThread.start();
-		}
-		catch(Exception e)
-		{
-			
-		}
-	}
-	
-	public void run()
-	{
-		String userCommand = input.next();
-		if(userCommand.equals("EXIT"))
-		{
-			System.out.println("attempting to exit");
-			serverThread.stop();
-			System.exit(0);
-		}
-	}
-}
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GreetingServer extends Thread
 {
-	String msgToSend = "I don't know why you say goodbye I say hello!";
+	String systemCommandString = "###SYSTEM::";
+	String systemCommandPatternString = "(#{3})(SYSTEM::)";
+	Pattern systemCommandPattern;
 	private ServerSocket serverSocket;
-	
-	
-	public GreetingServer(int port, int timeOut) throws IOException
-	{
-		serverSocket = new ServerSocket(port);
-		serverSocket.setSoTimeout(timeOut);
-	}
+
 	
 	public GreetingServer(int port) throws IOException
 	{
+		systemCommandPattern = Pattern.compile(systemCommandPatternString);
+		
 		serverSocket = new ServerSocket(port);
 	}
 	
@@ -72,10 +24,9 @@ public class GreetingServer extends Thread
 	{
 		try
 		{
-			boolean exitLoop = false; // TODO: make this change to true with command from input thread
-			while(!exitLoop)
+			while(true)
 			{
-				// System.out.println("You (to self): Wondering if after all these years I'll meet the client port");
+				
 				Socket server = serverSocket.accept();
 				DataInputStream in = new DataInputStream(server.getInputStream());
 				String recievedMessage = in.readUTF();
@@ -83,14 +34,19 @@ public class GreetingServer extends Thread
 				
 				Socket client = null;
 				Scanner input = new Scanner(System.in).useDelimiter("\n");
-				
-				System.out.print("You: ");
-				msgToSend = input.next();
-				
-				System.out.println(msgToSend);
 				DataOutputStream out = new DataOutputStream(server.getOutputStream());
-				out.writeUTF(msgToSend);
-				server.close();
+				
+				Matcher m = systemCommandPattern.matcher(recievedMessage);
+				if(m.find())
+				{
+					out.writeUTF("was a command");
+				}
+				else
+				{
+					out.writeUTF("was a message");
+				}
+				
+				// server.close();
 			}
 		}
 		catch(SocketTimeoutException s)
@@ -101,29 +57,20 @@ public class GreetingServer extends Thread
 		{
 			e.printStackTrace();
 		}
+		// server.close();
 	}
 	
 	public static void main(String[] args)
 	{
 		int port = Integer.parseInt(args[0]);
 		int timeOutMs = 0;
-		if(args.length > 1)
-		{
-				timeOutMs = Integer.parseInt(args[1]);
-		}
 		
 		Thread t = null;
 		
 		try
 		{
-			if(args.length > 1)
-			{
-				t = new WaitForInput(port, timeOutMs);
-			}
-			else
-			{
-				t = new WaitForInput(port);
-			}
+
+			t = new GreetingServer(port);
 			t.start();
 		}
 		

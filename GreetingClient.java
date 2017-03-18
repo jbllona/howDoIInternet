@@ -7,24 +7,32 @@ public class GreetingClient
 {
 	public static void main(String [] args)
 	{
-		String serverName = args[0];
-		int port = Integer.parseInt(args[1]);
+		UserInfo localUser = WelcomScreen.desplay();	// get info for initializing
 		try
 		{
-			System.out.println("Connecting to " + serverName + " on port " + port);
 			
-			Socket client = null;
-			Scanner input = new Scanner(System.in).useDelimiter("\n");
-			String msgToSend;
+			System.out.println("Connecting to " + localUser.address + " on port " + localUser.port);
+			
+			Socket client = null;	// initializing Socket
+			client = new Socket(localUser.address, localUser.port);
+			
+			// // initializing I/O
+			Scanner input = new Scanner(System.in).useDelimiter("\n");	
+			OutputStream outToServer = client.getOutputStream();
+			DataOutputStream out = new DataOutputStream(outToServer);
+			String msgToSend = "";
+			InputStream inFromServer = client.getInputStream();
+			DataInputStream in = new DataInputStream(inFromServer);
+			
+			out.writeUTF("###SYSTEM::CREATEUSER::"+localUser.name);
+			
+			if(in.readUTF().equals("success")
+			{
+				
+			}
 			
 			while(true)
 			{
-				client = new Socket(serverName, port);
-				
-
-				OutputStream outToServer = client.getOutputStream();
-				DataOutputStream out = new DataOutputStream(outToServer);
-				
 				
 				System.out.print("You: ");
 				
@@ -36,8 +44,8 @@ public class GreetingClient
 				}
 				
 				out.writeUTF(msgToSend);
-				InputStream inFromServer = client.getInputStream();
-				DataInputStream in = new DataInputStream(inFromServer);
+				
+				
 				System.out.println("sent");
 				System.out.println("\nServer: " + in.readUTF());
 				
