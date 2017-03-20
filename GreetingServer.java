@@ -1,9 +1,9 @@
 import java.net.*;
 import java.io.*;
 import java.util.Scanner;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.*;
 
 public class GreetingServer extends Thread
 {
@@ -11,12 +11,12 @@ public class GreetingServer extends Thread
 	String systemCommandPatternString = "(#{3})(SYSTEM::)";
 	Pattern systemCommandPattern;
 	private ServerSocket serverSocket;
-
+	Hashtable<String, String> activeUsers;
 	
 	public GreetingServer(int port) throws IOException
 	{
+		activeUsers = new Hashtable<String, String>();
 		systemCommandPattern = Pattern.compile(systemCommandPatternString);
-		
 		serverSocket = new ServerSocket(port);
 	}
 	
@@ -40,6 +40,7 @@ public class GreetingServer extends Thread
 				if(m.find())
 				{
 					out.writeUTF("was a command");
+					processSystemCommand(recievedMessage.substring(11));
 				}
 				else
 				{
@@ -58,6 +59,11 @@ public class GreetingServer extends Thread
 			e.printStackTrace();
 		}
 		// server.close();
+	}
+	
+	public void processSystemCommand(String command)
+	{
+		
 	}
 	
 	public static void main(String[] args)

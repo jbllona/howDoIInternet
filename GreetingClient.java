@@ -26,7 +26,7 @@ public class GreetingClient
 			
 			out.writeUTF("###SYSTEM::CREATEUSER::"+localUser.name);
 			
-			if(in.readUTF().equals("success")
+			if(in.readUTF().equals("success"))
 			{
 				
 			}
